@@ -1,0 +1,11 @@
+.DS_Store
+.idea/
+.vscode/
+node_modules/
+coverage/
+.env
+.env.*
+!.env.example
+
+# clasp authentication is stored outside this project. Keep local overrides out.
+.clasp.local.json

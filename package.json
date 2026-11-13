@@ -1,0 +1,20 @@
+{
+  "name": "manage-elect",
+  "version": "0.1.0",
+  "private": true,
+  "description": "iPhone geofence events, Google Apps Script, Google Sheets, and LINE-based utility bill sharing",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mashushokunin/manage-elect.git"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "gas:login": "npx @google/clasp login",
+    "gas:push": "npx @google/clasp push",
+    "gas:pull": "npx @google/clasp pull",
+    "gas:status": "npx @google/clasp status"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
