@@ -1,6 +1,6 @@
 {
   "name": "manage-elect",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
   "description": "iPhone geofence events, Google Apps Script, Google Sheets, and LINE-based utility bill sharing",
   "repository": {

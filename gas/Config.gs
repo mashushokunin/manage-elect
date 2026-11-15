@@ -1,9 +1,14 @@
 var APP_CONFIG = Object.freeze({
-  VERSION: '0.1.0',
+  VERSION: '0.3.0',
   SPREADSHEET_ID: '1dDeKq9-aKaXM2ezV5It8_xqb-Wji8adMMTPNaPKkuTI',
   TIME_ZONE: 'Asia/Tokyo',
   SHEETS: Object.freeze({
     EVENTS: '在宅イベント',
+    CORRECTIONS: 'イベント修正',
+    PRESENCE_SUMMARY: '在宅集計',
+    BILLING_ITEMS: '請求項目',
+    BILLS: '請求履歴',
+    ALLOCATIONS: '按分結果',
     USERS: 'ユーザー',
     SETTINGS: '設定',
     AUDIT: '監査ログ'
@@ -26,6 +31,61 @@ var APP_CONFIG = Object.freeze({
       'record_status',
       'review_reason',
       'request_id'
+    ]),
+    CORRECTIONS: Object.freeze([
+      'correction_id',
+      'target_event_id',
+      'action',
+      'user_id',
+      'event_type',
+      'occurred_at',
+      'reason',
+      'corrected_by',
+      'corrected_at'
+    ]),
+    PRESENCE_SUMMARY: Object.freeze([
+      'period_start',
+      'period_end',
+      'user_id',
+      'display_name',
+      'present_minutes',
+      'away_minutes',
+      'unknown_minutes',
+      'period_minutes',
+      'calculation_status',
+      'calculated_at'
+    ]),
+    BILLING_ITEMS: Object.freeze([
+      'billing_item_id',
+      'provider_name',
+      'display_name',
+      'enabled',
+      'display_order'
+    ]),
+    BILLS: Object.freeze([
+      'bill_id',
+      'billing_item_id',
+      'period_start',
+      'period_end',
+      'amount_yen',
+      'entered_by',
+      'entered_at',
+      'calculation_status',
+      'calculated_at',
+      'unknown_minutes',
+      'notes'
+    ]),
+    ALLOCATIONS: Object.freeze([
+      'calculation_id',
+      'bill_id',
+      'user_id',
+      'display_name',
+      'present_minutes',
+      'unknown_minutes',
+      'ratio',
+      'raw_amount_yen',
+      'amount_yen',
+      'calculated_at'
     ]),
     USERS: Object.freeze(['user_id', 'display_name', 'enabled']),
     SETTINGS: Object.freeze(['key', 'value', 'description']),

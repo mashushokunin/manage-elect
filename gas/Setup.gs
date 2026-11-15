@@ -3,18 +3,39 @@ function setupProject() {
   spreadsheet.setSpreadsheetTimeZone(APP_CONFIG.TIME_ZONE);
 
   var eventsSheet = getOrCreateEventsSheet_(spreadsheet);
+  var correctionsSheet = getOrCreateSheet_(spreadsheet, APP_CONFIG.SHEETS.CORRECTIONS);
+  var presenceSummarySheet = getOrCreateSheet_(spreadsheet, APP_CONFIG.SHEETS.PRESENCE_SUMMARY);
+  var billingItemsSheet = getOrCreateSheet_(spreadsheet, APP_CONFIG.SHEETS.BILLING_ITEMS);
+  var billsSheet = getOrCreateSheet_(spreadsheet, APP_CONFIG.SHEETS.BILLS);
+  var allocationsSheet = getOrCreateSheet_(spreadsheet, APP_CONFIG.SHEETS.ALLOCATIONS);
   var usersSheet = getOrCreateSheet_(spreadsheet, APP_CONFIG.SHEETS.USERS);
   var settingsSheet = getOrCreateSheet_(spreadsheet, APP_CONFIG.SHEETS.SETTINGS);
   var auditSheet = getOrCreateSheet_(spreadsheet, APP_CONFIG.SHEETS.AUDIT);
 
   ensureHeaders_(eventsSheet, APP_CONFIG.HEADERS.EVENTS);
+  ensureHeaders_(correctionsSheet, APP_CONFIG.HEADERS.CORRECTIONS);
+  ensureHeaders_(presenceSummarySheet, APP_CONFIG.HEADERS.PRESENCE_SUMMARY);
+  ensureHeaders_(billingItemsSheet, APP_CONFIG.HEADERS.BILLING_ITEMS);
+  ensureHeaders_(billsSheet, APP_CONFIG.HEADERS.BILLS);
+  ensureHeaders_(allocationsSheet, APP_CONFIG.HEADERS.ALLOCATIONS);
   ensureHeaders_(usersSheet, APP_CONFIG.HEADERS.USERS);
   ensureHeaders_(settingsSheet, APP_CONFIG.HEADERS.SETTINGS);
   ensureHeaders_(auditSheet, APP_CONFIG.HEADERS.AUDIT);
 
   seedUsers_(usersSheet);
   seedSettings_(settingsSheet);
-  formatProjectSheets_(eventsSheet, usersSheet, settingsSheet, auditSheet);
+  seedBillingItems_(billingItemsSheet);
+  formatProjectSheets_(
+    eventsSheet,
+    correctionsSheet,
+    presenceSummarySheet,
+    billingItemsSheet,
+    billsSheet,
+    allocationsSheet,
+    usersSheet,
+    settingsSheet,
+    auditSheet
+  );
 
   appendAuditLog_(spreadsheet, {
     requestId: 'MANUAL_SETUP',
@@ -137,8 +158,39 @@ function seedSettings_(settingsSheet) {
   }
 }
 
-function formatProjectSheets_(eventsSheet, usersSheet, settingsSheet, auditSheet) {
-  [eventsSheet, usersSheet, settingsSheet, auditSheet].forEach(function (sheet) {
+function seedBillingItems_(billingItemsSheet) {
+  if (billingItemsSheet.getLastRow() >= 2) {
+    return;
+  }
+  billingItemsSheet.getRange(2, 1, 3, 5).setValues([
+    ['electricity', '電力会社', '電気', true, 1],
+    ['gas', 'ガス会社', 'ガス', true, 2],
+    ['water', '水道局', '水道', true, 3]
+  ]);
+}
+
+function formatProjectSheets_(
+  eventsSheet,
+  correctionsSheet,
+  presenceSummarySheet,
+  billingItemsSheet,
+  billsSheet,
+  allocationsSheet,
+  usersSheet,
+  settingsSheet,
+  auditSheet
+) {
+  [
+    eventsSheet,
+    correctionsSheet,
+    presenceSummarySheet,
+    billingItemsSheet,
+    billsSheet,
+    allocationsSheet,
+    usersSheet,
+    settingsSheet,
+    auditSheet
+  ].forEach(function (sheet) {
     sheet.setFrozenRows(1);
     var headerRange = sheet.getRange(1, 1, 1, sheet.getLastColumn());
     headerRange.setFontWeight('bold').setBackground('#d9ead3');
@@ -146,6 +198,50 @@ function formatProjectSheets_(eventsSheet, usersSheet, settingsSheet, auditSheet
   });
 
   eventsSheet.getRange('D:E').setNumberFormat('yyyy/MM/dd HH:mm:ss');
+  correctionsSheet.getRange('F:F').setNumberFormat('yyyy/MM/dd HH:mm:ss');
+  correctionsSheet.getRange('I:I').setNumberFormat('yyyy/MM/dd HH:mm:ss');
+  correctionsSheet.getRange('C2:C').setDataValidation(
+    SpreadsheetApp.newDataValidation()
+      .requireValueInList(['ADD', 'REPLACE', 'VOID'], true)
+      .setAllowInvalid(false)
+      .build()
+  );
+  correctionsSheet.getRange('E2:E').setDataValidation(
+    SpreadsheetApp.newDataValidation()
+      .requireValueInList(['ENTER', 'EXIT'], true)
+      .setAllowInvalid(false)
+      .build()
+  );
+  presenceSummarySheet.getRange('A:B').setNumberFormat('yyyy/MM/dd HH:mm:ss');
+  presenceSummarySheet.getRange('E:H').setNumberFormat('0.00');
+  presenceSummarySheet.getRange('J:J').setNumberFormat('yyyy/MM/dd HH:mm:ss');
+  billingItemsSheet.getRange('D2:D').insertCheckboxes();
+  billingItemsSheet.getRange('E:E').setNumberFormat('0');
+  billsSheet.getRange('C:D').setNumberFormat('yyyy/MM/dd HH:mm:ss');
+  billsSheet.getRange('E:E').setNumberFormat('¥#,##0');
+  billsSheet.getRange('G:G').setNumberFormat('yyyy/MM/dd HH:mm:ss');
+  billsSheet.getRange('I:I').setNumberFormat('yyyy/MM/dd HH:mm:ss');
+  billsSheet.getRange('J:J').setNumberFormat('0.00');
+  billsSheet.getRange('B2:B').setDataValidation(
+    SpreadsheetApp.newDataValidation()
+      .requireValueInList(['electricity', 'gas', 'water'], true)
+      .setAllowInvalid(false)
+      .build()
+  );
+  billsSheet.getRange('H2:H').setDataValidation(
+    SpreadsheetApp.newDataValidation()
+      .requireValueInList(
+        ['PENDING', 'CALCULATED', 'NEEDS_REVIEW', 'NEEDS_DECISION', 'ERROR'],
+        true
+      )
+      .setAllowInvalid(false)
+      .build()
+  );
+  allocationsSheet.getRange('E:F').setNumberFormat('0.00');
+  allocationsSheet.getRange('G:G').setNumberFormat('0.00%');
+  allocationsSheet.getRange('H:H').setNumberFormat('¥#,##0.00');
+  allocationsSheet.getRange('I:I').setNumberFormat('¥#,##0');
+  allocationsSheet.getRange('J:J').setNumberFormat('yyyy/MM/dd HH:mm:ss');
   auditSheet.getRange('A:A').setNumberFormat('yyyy/MM/dd HH:mm:ss');
   usersSheet.getRange('C2:C').insertCheckboxes();
 }

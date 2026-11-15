@@ -58,6 +58,20 @@ function recordPresenceEvent_(payload, requestId) {
       ].filter(String).join(', ')
     });
 
+    try {
+      refreshPresenceSummaryForMonth_(eventData.occurredAt, spreadsheet);
+    } catch (summaryError) {
+      appendAuditLog_(spreadsheet, {
+        requestId: requestId,
+        action: 'REFRESH_PRESENCE_SUMMARY',
+        userId: eventData.userId,
+        outcome: 'ERROR',
+        details: summaryError && summaryError.message
+          ? summaryError.message
+          : String(summaryError)
+      });
+    }
+
     return {
       duplicate: false,
       eventId: eventData.eventId,

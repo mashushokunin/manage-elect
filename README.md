@@ -4,7 +4,7 @@
 
 Repository: [mashushokunin/manage-elect](https://github.com/mashushokunin/manage-elect)
 
-現在は第1段階として、iPhoneショートカットから受け取った `ENTER` / `EXIT` イベントをGoogle Apps Scriptで検証し、Googleスプレッドシートへ記録するところまで実装しています。
+現在は第3段階まで実装し、在宅イベントの記録、在宅時間集計、修正履歴を残す手動補正、請求項目管理、在宅時間比率による請求按分に対応しています。
 
 ## システム構成
 
@@ -29,11 +29,11 @@ flowchart TD
    - 連続した同種イベントや時系列逆転の要確認記録
    - 日本時間での保存
    - ユーザー、設定、在宅イベント、監査ログの初期化
-2. **在宅時間集計・手動修正**
+2. **在宅時間集計・手動修正（実装済み）**
    - 指定期間の境界をまたぐ在宅時間の計算
    - 欠落区間を「判定不能」として分離
    - 修正履歴を残す手動補正
-3. **請求管理・按分**
+3. **請求管理・按分（実装済み）**
    - 電気・ガス・水道などの設定マスター
    - `個人の在宅時間 / 2人の在宅時間合計` による全額按分
    - ゼロ時間時の例外処理
@@ -57,6 +57,8 @@ manage-elect/
 │   ├── Api.gs                 # Webアプリの入口
 │   ├── Config.gs              # ID、シート名、既定値
 │   ├── EventService.gs        # 認証・重複防止・イベント記録
+│   ├── PresenceService.gs     # 在宅時間集計・修正適用
+│   ├── BillingService.gs      # 請求管理・在宅時間比率による按分
 │   ├── Setup.gs               # 初回シート作成と診断
 │   ├── SpreadsheetStore.gs    # スプレッドシート操作
 │   ├── Validation.gs          # リクエスト検証
@@ -78,7 +80,7 @@ manage-elect/
 npm test
 ```
 
-デプロイとiPhoneショートカットの設定は [docs/stage1-deployment.md](docs/stage1-deployment.md) を参照してください。
+デプロイとiPhoneショートカットの設定は [docs/stage1-deployment.md](docs/stage1-deployment.md)、在宅時間集計と手動修正は [docs/stage2-operations.md](docs/stage2-operations.md)、請求管理と按分は [docs/stage3-billing.md](docs/stage3-billing.md) を参照してください。
 
 ## セキュリティ方針
 
