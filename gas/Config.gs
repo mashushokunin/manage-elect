@@ -1,5 +1,5 @@
 var APP_CONFIG = Object.freeze({
-  VERSION: '0.3.0',
+  VERSION: '0.4.0',
   SPREADSHEET_ID: '1dDeKq9-aKaXM2ezV5It8_xqb-Wji8adMMTPNaPKkuTI',
   TIME_ZONE: 'Asia/Tokyo',
   SHEETS: Object.freeze({
@@ -14,7 +14,8 @@ var APP_CONFIG = Object.freeze({
     AUDIT: '監査ログ'
   }),
   SCRIPT_PROPERTIES: Object.freeze({
-    USER_TOKENS_JSON: 'USER_TOKENS_JSON'
+    USER_TOKENS_JSON: 'USER_TOKENS_JSON',
+    LINE_GATEWAY_SECRET: 'LINE_GATEWAY_SECRET'
   }),
   DEFAULTS: Object.freeze({
     MAX_PAST_EVENT_HOURS: 168,

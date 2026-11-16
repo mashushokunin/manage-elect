@@ -12,6 +12,16 @@ function doPost(event) {
   var requestId = Utilities.getUuid();
   try {
     var payload = parseRequestBody_(event);
+    if (payload.kind === 'line_webhook') {
+      var lineResult = handleLineWebhookRequest_(payload, requestId);
+      return jsonResponse_({
+        ok: true,
+        request_id: requestId,
+        processed: lineResult.processed,
+        replies: lineResult.replies
+      });
+    }
+
     var result = recordPresenceEvent_(payload, requestId);
     return jsonResponse_({
       ok: true,

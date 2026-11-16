@@ -4,7 +4,7 @@
 
 Repository: [mashushokunin/manage-elect](https://github.com/mashushokunin/manage-elect)
 
-現在は第3段階まで実装し、在宅イベントの記録、在宅時間集計、修正履歴を残す手動補正、請求項目管理、在宅時間比率による請求按分に対応しています。
+現在は第4段階の接続基盤まで実装し、在宅イベントの記録、在宅時間集計、修正履歴を残す手動補正、請求項目管理、在宅時間比率による請求按分、LINE Webhookの署名検証とApps Scriptへの安全な転送に対応しています。
 
 ## システム構成
 
@@ -13,8 +13,10 @@ flowchart TD
     A[自分のiPhone<br>到着・出発オートメーション] -->|HTTPS POST| C[Google Apps Script Web App]
     B[友人のiPhone<br>到着・出発オートメーション] -->|HTTPS POST| C
     C --> D[(Googleスプレッドシート)]
-    E[LINE Messaging API<br>第4段階] --> C
-    C --> E
+    E[LINE Messaging API<br>第4段階] -->|署名付きWebhook| G[Supabase Edge Function]
+    G -->|検証済みイベント| C
+    C -->|返信内容| G
+    G -->|Reply API| E
     D --> F[在宅時間集計<br>第2段階]
 ```
 
@@ -39,6 +41,8 @@ flowchart TD
    - ゼロ時間時の例外処理
    - 円単位の端数調整と合計金額の一致
 4. **LINE Bot**
+   - Supabase Edge FunctionでWebhook署名を検証
+   - 検証済みイベントだけをApps Scriptへ転送
    - 請求項目・金額・対象期間の入力
    - 按分結果の返信
    - 計算履歴の保存
@@ -81,6 +85,7 @@ npm test
 ```
 
 デプロイとiPhoneショートカットの設定は [docs/stage1-deployment.md](docs/stage1-deployment.md)、在宅時間集計と手動修正は [docs/stage2-operations.md](docs/stage2-operations.md)、請求管理と按分は [docs/stage3-billing.md](docs/stage3-billing.md) を参照してください。
+LINE Botの接続と疎通確認は [docs/stage4-line.md](docs/stage4-line.md) を参照してください。
 
 ## セキュリティ方針
 
